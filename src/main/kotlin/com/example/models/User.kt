@@ -10,5 +10,6 @@ data class User(
     var email: String,
     val password: String,
     val distance: String,
-    val location: String
+    val location: String,
+    val reportPreference: String
 )
