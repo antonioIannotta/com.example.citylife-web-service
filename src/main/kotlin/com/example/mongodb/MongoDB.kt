@@ -26,11 +26,18 @@ class MongoDB {
             .getCollection(userCollection).find().toList()
     }
 
-    fun readUserFromUsername(username: String): Document {
-        return MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun readUserFromUsername(username: String): User {
+        return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).find().first {
                 document -> document["Username"].toString() == username
-            }!!
+            }!!)
+    }
+
+    fun readUserFromEmail(email: String): User {
+        return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+            .getCollection(userCollection).find().first {
+                    document -> document["Username"].toString() == email
+            }!!)
     }
 
     fun insertUser(user: User) =
@@ -106,4 +113,17 @@ class MongoDB {
             .append("localDateTime", report.localDateTime)
             .append("text", report.text)
             .append("username", report.username)
+
+    private fun composeUser(document: Document): User {
+        val name = document["name"].toString()
+        val surname = document["surname"].toString()
+        val username = document["username"].toString()
+        val email = document["email"].toString()
+        val password = document["password"].toString()
+        val distance = document["distance"].toString()
+        val location = document["location"].toString()
+        val reportPreference = document["reportPreference"].toString()
+
+        return User(name, surname, username, email, password, distance, location, reportPreference)
+    }
 }

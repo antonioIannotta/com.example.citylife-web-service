@@ -21,7 +21,15 @@ fun Route.customerRouting() {
         }
         get("{username?}") {
             val user = MongoDB().readUserFromUsername(call.parameters["username"]!!)
-            if (user.isEmpty()) {
+            if (!user.equals(null)) {
+                call.respond(user)
+            } else {
+                call.respondText("User not found!", status = HttpStatusCode.OK)
+            }
+        }
+        get("{email?}") {
+            val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
+            if (!user.equals(null)) {
                 call.respond(user)
             } else {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
