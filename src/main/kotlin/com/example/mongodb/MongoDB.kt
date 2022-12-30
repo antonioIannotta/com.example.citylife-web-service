@@ -14,7 +14,7 @@ import org.bson.conversions.Bson
 class MongoDB {
 
     private val mongoAddress =
-        "mongodb+srv://antonioIannotta:AntonioIannotta-26@citylife.f5vv5xs.mongodb.net/?retryWrites=true"
+        "mongodb+srv://antonioIannotta:admin@citylife.f5vv5xs.mongodb.net/?retryWrites=true"
     private val databaseName = "CityLife"
     private val userCollection = "users"
     private val serverReportCollection = "serverReport"
