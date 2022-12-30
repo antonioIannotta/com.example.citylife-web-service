@@ -1,5 +1,5 @@
 package com.example.routes
-
+/*
 import com.example.models.ClientReport
 import com.example.models.User
 import com.example.mongodb.MongoDB
@@ -100,3 +100,4 @@ fun Route.customerRouting() {
         }
     }
 }
+*/

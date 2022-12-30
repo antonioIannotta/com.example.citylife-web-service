@@ -1,5 +1,8 @@
 package com.example.plugins
 
+import com.example.models.ClientReport
+import com.example.models.User
+import com.example.mongodb.MongoDB
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -11,6 +14,87 @@ fun Application.configureRouting() {
     routing {
         get("/") {
             call.respondText("Hello World!")
+        }
+        get("/users") {
+            val userList = MongoDB().readAllUsers()
+            if (userList.isNotEmpty()) {
+                call.respond(userList)
+            } else {
+                call.respondText("No users found!", status = HttpStatusCode.OK)
+            }
+        }
+        get("/users/{username?}") {
+            val user = MongoDB().readUserFromUsername(call.parameters["username"]!!)
+            if (!user.equals(null)) {
+                call.respond(user)
+            } else {
+                call.respondText("User not found!", status = HttpStatusCode.OK)
+            }
+        }
+        get("/users/{email?}/{password?}") {
+            val email = call.parameters["email"]!!
+            val password = call.parameters["password"]!!
+
+            if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password)) {
+                val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
+                call.respond(user)
+            } else {
+                call.respond(User("", "", "", "", "", "", "",""))
+                call.respondText("User not found!", status = HttpStatusCode.OK)
+            }
+        }
+        get("/users/insertUser") {
+            println("insert user chiamata")
+            val user = call.receive<User>()
+            if (MongoDB().insertUser(user) == "OK") {
+                call.respondText("User inserted successfully!")
+            } else {
+                call.respondText("The email is already used for another account!")
+            }
+        }
+        get("/users/updateLocation/{username?}/{location?}") {
+            MongoDB().updateLocationInUserCollection(call.parameters["username"]!!, call.parameters["location"]!!)
+            call.respondText("Location updated correctly!")
+        }
+        get("/users/updateDistance/{username?}/{distance?}") {
+            MongoDB().updateDistanceInUserCollection(call.parameters["username"]!!, call.parameters["distance"]!!)
+            call.respondText("Distance updated correctly!")
+        }
+        get("/users/updateReportPreference/{username?}/{reportPreference}") {
+            MongoDB()
+                .updateReportPreferenceInUserCollection(call.parameters["username"]!!, call.parameters["reportPreference"]!!)
+            call.respondText("Report preference updated correctly!")
+        }
+        get("/users/lastReport") {
+            val lastServerReport = MongoDB().lastServerReport()
+            if (lastServerReport == null) {
+                call.respondText("No Report stored!")
+            } else {
+                call.respond(lastServerReport)
+            }
+        }
+        get("/users/insertReport") {
+            val report = call.receive<ClientReport>()
+            MongoDB().insertClientReport(report)
+            call.respondText("Client report correctly inserted!")
+        }
+        get("/location//insertLocationAndDistance/{username?}/{location?}/{distance?}") {
+            MongoDB().insertLocationAndDistanceInLocationCollection(
+                call.parameters["username"]!!,
+                call.parameters["location"]!!,
+                call.parameters["distance"]!!
+            )
+
+            call.respondText("Username, location and distance correctly inserted!")
+        }
+        get("/location/updateLocationAndDistance/{username?}/{location?}/{distance?}") {
+            MongoDB().updateLocationAndDistanceInLocationCollection(
+                call.parameters["username"]!!,
+                call.parameters["location"]!!,
+                call.parameters["distance"]!!
+            )
+
+            call.respondText("Username, location and distance correctly updated!")
         }
     }
 }
