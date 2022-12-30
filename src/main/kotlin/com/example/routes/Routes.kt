@@ -4,6 +4,7 @@ import com.example.models.ClientReport
 import com.example.models.User
 import com.example.mongodb.MongoDB
 import io.ktor.http.*
+import io.ktor.http.cio.HttpMessage
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -35,6 +36,7 @@ fun Route.customerRouting() {
                 val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
                 call.respond(user)
             } else {
+                call.respond(User("", "", "", "", "", "", "",""))
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
