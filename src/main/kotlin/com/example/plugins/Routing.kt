@@ -78,7 +78,7 @@ fun Application.configureRouting() {
             MongoDB().insertClientReport(report)
             call.respondText("Client report correctly inserted!")
         }
-        get("/location//insertLocationAndDistance/{username?}/{location?}/{distance?}") {
+        get("/location/insertLocationAndDistance/{username?}/{location?}/{distance?}") {
             MongoDB().insertLocationAndDistanceInLocationCollection(
                 call.parameters["username"]!!,
                 call.parameters["location"]!!,
