@@ -12,8 +12,8 @@ import io.ktor.server.routing.*
 
 fun Route.customerRouting() {
     route("/users") {
-        val userList = MongoDB().readAllUsers()
         get {
+            val userList = MongoDB().readAllUsers()
             if (userList.isNotEmpty()) {
                 call.respond(userList)
             } else {
@@ -41,6 +41,7 @@ fun Route.customerRouting() {
             }
         }
         post("/insertUser") {
+            println("insert user chiamata")
             val user = call.receive<User>()
             if (MongoDB().insertUser(user) == "OK") {
                 call.respondText("User inserted successfully!")
