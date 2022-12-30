@@ -27,9 +27,12 @@ fun Route.customerRouting() {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        get("{email?}") {
-            val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
-            if (!user.equals(null)) {
+        get("{email?}/{password?}") {
+            val email = call.parameters["email"]!!
+            val password = call.parameters["password"]!!
+
+            if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password)) {
+                val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
                 call.respond(user)
             } else {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
@@ -37,8 +40,12 @@ fun Route.customerRouting() {
         }
         post("/insertUser") {
             val user = call.receive<User>()
-            MongoDB().insertUser(user)
-            call.respondText("User inserted successfully!")
+            if (MongoDB().insertUser(user) == "OK") {
+                call.respondText("User inserted successfully!")
+            } else {
+                call.respondText("The email is already used for another account!")
+            }
+
         }
         get("/updateLocation/{username?}/{location?}") {
             MongoDB().updateLocationInUserCollection(call.parameters["username"]!!, call.parameters["location"]!!)
