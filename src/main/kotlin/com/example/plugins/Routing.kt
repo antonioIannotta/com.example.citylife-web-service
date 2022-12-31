@@ -73,7 +73,7 @@ fun Application.configureRouting() {
                 call.respond(lastServerReport)
             }
         }
-        get("/users/insertReport") {
+        post("/users/insertReport") {
             val report = call.receive<ClientReport>()
             MongoDB().insertClientReport(report)
             call.respondText("Client report correctly inserted!")
