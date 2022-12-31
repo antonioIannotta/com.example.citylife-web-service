@@ -43,9 +43,19 @@ fun Application.configureRouting() {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        post("/users/insertUser") {
-            println("insert user chiamata")
-            val user = call.receive<User>()
+        get("/users/insertUser/{name?}/{surname}/" +
+                "{username?}/{email?}/{password?}/{distance?}/" +
+                "{location?}/{reportPreference}") {
+            val user = User(
+                call.parameters["name"]!!,
+                call.parameters["surname"]!!,
+                call.parameters["username"]!!,
+                call.parameters["email"]!!,
+                call.parameters["password"]!!,
+                call.parameters["distance"]!!,
+                call.parameters["location"]!!,
+                call.parameters["reportPreference"]!!
+            )
             if (!MongoDB().checkEmailExistsInCollection("users", user.email)) {
                 MongoDB().insertUser(user)
                 call.respondText("User inserted successfully!")
