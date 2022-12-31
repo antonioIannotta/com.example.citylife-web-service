@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.models.ClientReport
+/*import com.example.models.ClientReport
 import com.example.models.User
 import com.example.mongodb.MongoDB
 import io.ktor.http.*
@@ -99,4 +99,4 @@ fun Route.customerRouting() {
             call.respondText("Username, location and distance correctly updated!")
         }
     }
-}
+}*/
