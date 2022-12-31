@@ -43,7 +43,7 @@ fun Application.configureRouting() {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        get("/users/insertUser") {
+        post("/users/insertUser") {
             println("insert user chiamata")
             val user = call.receive<User>()
             if (MongoDB().insertUser(user) == "OK") {
