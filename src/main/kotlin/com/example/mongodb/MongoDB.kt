@@ -127,11 +127,11 @@ class MongoDB {
         return User(name, surname, username, email, password, distance, location, reportPreference)
     }
 
-    fun checkEmailExistsInCollection(collectionName: String, email: String): Boolean =
+    fun checkEmailExistsInCollection(collectionName: String, email: String) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(collectionName).find().count {
                 document -> document["email"] == email
-            } == 1
+            }
 
     fun checkEmailExistsWithPasswordInCollection(collectionName: String, email: String, password: String) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)

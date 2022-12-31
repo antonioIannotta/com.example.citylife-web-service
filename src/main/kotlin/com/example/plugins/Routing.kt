@@ -56,7 +56,7 @@ fun Application.configureRouting() {
                 call.parameters["location"]!!,
                 call.parameters["reportPreference"]!!
             )
-            if (!MongoDB().checkEmailExistsInCollection("users", user.email)) {
+            if (MongoDB().checkEmailExistsInCollection("users", user.email) == 0) {
                 MongoDB().insertUser(user)
                 call.respondText("User inserted successfully!")
             } else {
