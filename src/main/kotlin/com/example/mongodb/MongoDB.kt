@@ -40,19 +40,9 @@ class MongoDB {
             }!!)
     }
 
-    fun insertUser(user: User): String {
-        var insertResult = ""
-
-        insertResult = if (checkEmailExistsInCollection(userCollection, user.email)) {
-            MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-                .getCollection(userCollection).insertOne(createUserDocument(user))
-
-            "OK"
-        } else {
-            "ERROR!"
-        }
-        return insertResult
-    }
+    fun insertUser(user: User) =
+        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+            .getCollection(userCollection).insertOne(createUserDocument(user))
 
     fun updateLocationInUserCollection(username: String, location: String) {
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
@@ -137,7 +127,7 @@ class MongoDB {
         return User(name, surname, username, email, password, distance, location, reportPreference)
     }
 
-    private fun checkEmailExistsInCollection(collectionName: String, email: String): Boolean =
+    fun checkEmailExistsInCollection(collectionName: String, email: String): Boolean =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(collectionName).find().count {
                 document -> document["email"] == email

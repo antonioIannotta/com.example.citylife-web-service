@@ -46,7 +46,8 @@ fun Application.configureRouting() {
         post("/users/insertUser") {
             println("insert user chiamata")
             val user = call.receive<User>()
-            if (MongoDB().insertUser(user) == "OK") {
+            if (MongoDB().checkEmailExistsInCollection("users", user.email)) {
+                MongoDB().insertUser(user)
                 call.respondText("User inserted successfully!")
             } else {
                 call.respondText("The email is already used for another account!")
