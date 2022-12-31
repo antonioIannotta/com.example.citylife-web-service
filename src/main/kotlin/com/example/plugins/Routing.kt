@@ -43,9 +43,9 @@ fun Application.configureRouting() {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        get("/users/insertUser/{name?}/{surname}/" +
+        get("/users/insertUser/{name?}/{surname?}/" +
                 "{username?}/{email?}/{password?}/{distance?}/" +
-                "{location?}/{reportPreference}") {
+                "{location?}/{reportPreference?}") {
             val user = User(
                 call.parameters["name"]!!,
                 call.parameters["surname"]!!,
