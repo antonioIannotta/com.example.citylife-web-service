@@ -1,13 +1,12 @@
 package com.example.mongodb
 
-import com.example.models.ClientReport
-import com.example.models.User
+import com.example.models.ClientReportDB
+import com.example.models.UserDB
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
-import org.bson.BsonArray
 import org.bson.Document
 import org.bson.conversions.Bson
 
@@ -26,23 +25,23 @@ class MongoDB {
             .getCollection(userCollection).find().toList()
     }
 
-    fun readUserFromUsername(username: String): User {
+    fun readUserFromUsername(username: String): UserDB {
         return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).find().first {
                 document -> document["Username"].toString() == username
             }!!)
     }
 
-    fun readUserFromEmail(email: String): User {
+    fun readUserFromEmail(email: String): UserDB {
         return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).find().first {
                     document -> document["Username"].toString() == email
             }!!)
     }
 
-    fun insertUser(user: User) =
+    fun insertUser(userDB: UserDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).insertOne(createUserDocument(user))
+            .getCollection(userCollection).insertOne(createUserDocument(userDB))
 
     fun updateLocationInUserCollection(username: String, location: String) {
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
@@ -69,7 +68,7 @@ class MongoDB {
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(serverReportCollection).find().first()
 
-    fun insertClientReport(report: ClientReport) =
+    fun insertClientReport(report: ClientReportDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(clientReportCollection).insertOne(createClientReportDocument(report))
 
@@ -96,17 +95,17 @@ class MongoDB {
             .getCollection(locationCollection).updateOne(filter, updates, options)
     }
 
-    private fun createUserDocument(user: User) =
+    private fun createUserDocument(userDB: UserDB) =
         Document()
-            .append("name", user.name)
-            .append("surname", user.surname)
-            .append("username", user.username)
-            .append("email", user.email)
-            .append("password", user.password)
-            .append("distance", user.distance)
-            .append("location", user.location)
+            .append("name", userDB.name)
+            .append("surname", userDB.surname)
+            .append("username", userDB.username)
+            .append("email", userDB.email)
+            .append("password", userDB.password)
+            .append("distance", userDB.distance)
+            .append("location", userDB.location)
 
-    private fun createClientReportDocument(report: ClientReport) =
+    private fun createClientReportDocument(report: ClientReportDB) =
         Document()
             .append("type", report.type)
             .append("location", report.location)
@@ -114,7 +113,7 @@ class MongoDB {
             .append("text", report.text)
             .append("username", report.username)
 
-    private fun composeUser(document: Document): User {
+    private fun composeUser(document: Document): UserDB {
         val name = document["name"].toString()
         val surname = document["surname"].toString()
         val username = document["username"].toString()
@@ -124,7 +123,7 @@ class MongoDB {
         val location = document["location"].toString()
         val reportPreference = document["reportPreference"].toString()
 
-        return User(name, surname, username, email, password, distance, location, reportPreference)
+        return UserDB(name, surname, username, email, password, distance, location, reportPreference)
     }
 
     fun checkEmailExistsInCollection(collectionName: String, email: String) =

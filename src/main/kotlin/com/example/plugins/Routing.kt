@@ -1,7 +1,7 @@
 package com.example.plugins
 
-import com.example.models.ClientReport
-import com.example.models.User
+import com.example.models.ClientReportDB
+import com.example.models.UserDB
 import com.example.mongodb.MongoDB
 import io.ktor.server.routing.*
 import io.ktor.http.*
@@ -39,11 +39,11 @@ fun Application.configureRouting() {
                 val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
                 call.respond(user)
             } else {
-                call.respond(User("", "", "", "", "", "", "",""))
+                call.respond(UserDB("", "", "", "", "", "", "",""))
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        get("/users/insertUser/{name?}/{surname?}/" +
+        /*get("/users/insertUser/{name?}/{surname?}/" +
                 "{username?}/{email?}/{password?}/{distance?}/" +
                 "{location?}/{reportPreference?}") {
             val user = User(
@@ -61,6 +61,12 @@ fun Application.configureRouting() {
                 call.respondText("User inserted successfully!")
             } else {
                 call.respondText("The email is already used for another account!")
+            }
+        }*/
+        post("/users/insertUser") {
+            val user = call.receive<UserDB>()
+            if (MongoDB().checkEmailExistsInCollection("users", user.email) == 0) {
+                MongoDB().insertUser(user)
             }
         }
         get("/users/updateLocation/{username?}/{location?}") {
@@ -85,7 +91,7 @@ fun Application.configureRouting() {
             }
         }
         post("/users/insertReport") {
-            val report = call.receive<ClientReport>()
+            val report = call.receive<ClientReportDB>()
             MongoDB().insertClientReport(report)
             call.respondText("Client report correctly inserted!")
         }

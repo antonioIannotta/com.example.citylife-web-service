@@ -3,7 +3,7 @@ package com.example.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class UserDB(
     var name: String,
     var surname: String,
     var username: String,
