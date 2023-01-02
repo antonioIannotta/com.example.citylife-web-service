@@ -115,6 +115,7 @@ class MongoDB {
             .append("username", report.username)
 
     private fun composeUser(document: Document): UserDB {
+        document
         val name = document["name"].toString()
         val surname = document["surname"].toString()
         val username = document["username"].toString()
