@@ -31,12 +31,14 @@ fun Application.configureRouting() {
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
-        get("/users/{email?}/{password?}") {
+        get("/users/signInUser/{email?}/{password?}") {
             val email = call.parameters["email"]!!
             val password = call.parameters["password"]!!
 
+            println("USEEEEEERS")
             if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password) == 1) {
                 val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
+                println("User --> " + user)
                 call.respond(user)
             } else {
                 call.respond(UserDB("", "", "", "", "", "", "",""))
