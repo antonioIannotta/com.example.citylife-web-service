@@ -104,6 +104,7 @@ class MongoDB {
             .append("password", userDB.password)
             .append("distance", userDB.distance)
             .append("location", userDB.location)
+            .append("reportPreference", userDB.reportPreference)
 
     private fun createClientReportDocument(report: ClientReportDB) =
         Document()
