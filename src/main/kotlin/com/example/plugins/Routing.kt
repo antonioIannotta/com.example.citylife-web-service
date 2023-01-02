@@ -35,7 +35,7 @@ fun Application.configureRouting() {
             val email = call.parameters["email"]!!
             val password = call.parameters["password"]!!
 
-            if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password)) {
+            if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password) == 1) {
                 val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
                 call.respond(user)
             } else {

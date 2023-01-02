@@ -35,7 +35,7 @@ class MongoDB {
     fun readUserFromEmail(email: String): UserDB {
         return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).find().first {
-                    document -> document["Username"].toString() == email
+                    document -> document["email"].toString() == email
             }!!)
     }
 
@@ -137,5 +137,5 @@ class MongoDB {
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(collectionName).find().count {
                     document -> document["email"] == email && document["password"] == password
-            } == 1
+            }
 }
