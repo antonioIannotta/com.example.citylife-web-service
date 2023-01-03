@@ -28,7 +28,7 @@ class MongoDB {
     fun readUserFromUsername(username: String): UserDB {
         return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).find().first {
-                document -> document["Username"].toString() == username
+                document -> document["username"].toString() == username
             }!!)
     }
 
@@ -59,7 +59,7 @@ class MongoDB {
 
     fun updateReportPreferenceInUserCollection(username: String, reportPreference: String) {
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).updateOne(
+            .getCollection(userCollection).findOneAndUpdate(
                 Filters.eq("username", username), Updates.set("reportPreference", reportPreference)
             )
     }

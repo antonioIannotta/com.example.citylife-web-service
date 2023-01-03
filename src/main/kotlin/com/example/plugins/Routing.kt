@@ -77,7 +77,7 @@ fun Application.configureRouting() {
             MongoDB().updateDistanceInUserCollection(call.parameters["username"]!!, call.parameters["distance"]!!)
             call.respondText("Distance updated correctly!")
         }
-        get("/users/updateReportPreference/{username?}/{reportPreference}") {
+        get("/users/updateReportPreference/{username?}/{reportPreference?}") {
             MongoDB()
                 .updateReportPreferenceInUserCollection(call.parameters["username"]!!, call.parameters["reportPreference"]!!)
             call.respondText("Report preference updated correctly!")
