@@ -58,18 +58,10 @@ class MongoDB {
     }
 
     fun updateReportPreferenceInUserCollection(username: String, reportPreference: String) {
-        val userDocument = MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).find().first {
-                document -> document["username"] == username
-            }
-
-        userDocument["reportPreference"] = reportPreference
-
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).deleteOne(Filters.eq(username))
-
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).insertOne(userDocument)
+            .getCollection(userCollection).findOneAndUpdate(
+                Filters.eq("username", username), Updates.set("reportPreference", reportPreference)
+            )
     }
 
     fun lastServerReport() =
