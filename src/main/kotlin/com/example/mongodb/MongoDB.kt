@@ -66,7 +66,7 @@ class MongoDB {
         userDocument["reportPreference"] = reportPreference
 
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).deleteMany(Filters.eq("username", username))
+            .getCollection(userCollection).deleteOne(Filters.eq(username))
 
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userCollection).insertOne(userDocument)
