@@ -66,7 +66,7 @@ class MongoDB {
 
     fun lastServerReport() =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(serverReportCollection).find().first()
+            .getCollection(serverReportCollection).find().last()
 
     fun insertClientReport(report: ClientReportDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
