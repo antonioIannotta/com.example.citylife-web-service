@@ -1,6 +1,7 @@
 package com.example.mongodb
 
 import com.example.models.ClientReportDB
+import com.example.models.ServerReportDB
 import com.example.models.UserDB
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
@@ -65,9 +66,18 @@ class MongoDB {
     }
 
     fun lastServerReport() =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(serverReportCollection).find().last()
+        composeServerReport(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+            .getCollection(serverReportCollection).find().last())
 
+    private fun composeServerReport(document: Document): ServerReportDB {
+        val type = document["type"]!!.toString()
+        val location = document["location"]!!.toString()
+        val localDateTime = document["localDateTime"]!!.toString()
+        val text = document["text"]!!.toString()
+        val listOfUsername = document["listOfUsername"]!!.toString()
+
+        return ServerReportDB(type, location, localDateTime, text, listOfUsername)
+    }
     fun insertClientReport(report: ClientReportDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(clientReportCollection).insertOne(createClientReportDocument(report))
