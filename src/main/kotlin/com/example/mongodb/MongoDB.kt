@@ -67,7 +67,7 @@ class MongoDB {
 
     fun lastServerReport() =
         composeServerReport(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(serverReportCollection).find().last())
+            .getCollection(serverReportCollection).find().first())
 
     private fun composeServerReport(document: Document): ServerReportDB {
         val type = document["type"]!!.toString()
