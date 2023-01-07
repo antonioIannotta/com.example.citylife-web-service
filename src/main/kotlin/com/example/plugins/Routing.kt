@@ -35,10 +35,8 @@ fun Application.configureRouting() {
             val email = call.parameters["email"]!!
             val password = call.parameters["password"]!!
 
-            println("USEEEEEERS")
             if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password) == 1) {
                 val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
-                println("User --> " + user)
                 call.respond(user)
             } else {
                 call.respond(UserDB("", "", "", "", "", "", "",""))
@@ -79,7 +77,7 @@ fun Application.configureRouting() {
             MongoDB().updateDistanceInUserCollection(call.parameters["username"]!!, call.parameters["distance"]!!)
             call.respondText("Distance updated correctly!")
         }
-        get("/users/updateReportPreference/{username?}/{reportPreference}") {
+        get("/users/updateReportPreference/{username?}/{reportPreference?}") {
             MongoDB()
                 .updateReportPreferenceInUserCollection(call.parameters["username"]!!, call.parameters["reportPreference"]!!)
             call.respondText("Report preference updated correctly!")
