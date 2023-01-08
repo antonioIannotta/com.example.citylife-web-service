@@ -4,6 +4,7 @@ import com.example.models.ClientReportDB
 import com.example.models.UserDB
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
+import com.mongodb.client.FindIterable
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
@@ -72,10 +73,10 @@ class MongoDB {
      */
 
     fun getAllReportForUsername(username: String) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+        createListOfClientReport(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userReportDocument).find().filter {
-                document -> document["interesetedUser"] == username
-            }
+                document -> document["interestedUser"] == username
+            })
 
     fun insertClientReport(report: ClientReportDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
@@ -104,6 +105,24 @@ class MongoDB {
             .getCollection(locationCollection).updateOne(filter, updates, options)
     }
 
+    private fun createListOfClientReport(listOfDocuments: List<Document>): MutableList<ClientReportDB> {
+        var listOfClientReportDB = emptyList<ClientReportDB>().toMutableList()
+
+        listOfDocuments.forEach {
+            document -> listOfClientReportDB.add(createClientReportFromDocument(document))
+        }
+        return listOfClientReportDB
+    }
+
+    private fun createClientReportFromDocument(document: Document): ClientReportDB {
+        val type = document["type"].toString()
+        val location = document["location"].toString()
+        val localDateTime = document["localDateTime"].toString()
+        val text = document["text"].toString()
+        val username = document["username"].toString()
+
+        return ClientReportDB(type, location, localDateTime, text , username)
+    }
     private fun createUserDocument(userDB: UserDB) =
         Document()
             .append("name", userDB.name)

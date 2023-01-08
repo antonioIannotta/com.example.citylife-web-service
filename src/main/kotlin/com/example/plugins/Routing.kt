@@ -82,12 +82,22 @@ fun Application.configureRouting() {
                 .updateReportPreferenceInUserCollection(call.parameters["username"]!!, call.parameters["reportPreference"]!!)
             call.respondText("Report preference updated correctly!")
         }
-        get("/users/lastReport") {
+        /*get("/users/lastReport") {
             val lastServerReport = MongoDB().lastServerReport()
             if (lastServerReport == null) {
                 call.respondText("No Report stored!")
             } else {
                 call.respond(lastServerReport)
+            }
+        }*/
+        get("/users/getReportForUser/{username?}") {
+            val username = call.parameters["username"]!!
+            val listOfReport = MongoDB().getAllReportForUsername(username)
+
+            if (listOfReport.isEmpty()) {
+                call.respondText("No report is of interest for the user")
+            } else {
+                call.respond(listOfReport)
             }
         }
         post("/users/insertReport") {
