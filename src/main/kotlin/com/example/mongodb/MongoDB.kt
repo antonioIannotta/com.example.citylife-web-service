@@ -17,6 +17,7 @@ class MongoDB {
     private val databaseName = "CityLife"
     private val userCollection = "users"
     private val serverReportCollection = "serverReport"
+    private val userReportDocument = "userReportDocument"
     private val clientReportCollection = "clientReport"
     private val locationCollection = "location"
 
@@ -64,9 +65,17 @@ class MongoDB {
             )
     }
 
-    fun lastServerReport() =
+    /*fun lastServerReport() =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(serverReportCollection).find().first()
+
+     */
+
+    fun getAllReportForUsername(username: String) =
+        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+            .getCollection(userReportDocument).find().filter {
+                document -> document["interesetedUser"] == username
+            }
 
     fun insertClientReport(report: ClientReportDB) =
         MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
