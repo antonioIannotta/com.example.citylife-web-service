@@ -95,6 +95,7 @@ fun Application.configureRouting() {
             val listOfReport = MongoDB().getAllReportForUsername(username)
 
             if (listOfReport.isEmpty()) {
+                call.respond(emptyList<ClientReportDB>().toMutableList())
                 call.respondText("No report is of interest for the user")
             } else {
                 call.respond(listOfReport)
