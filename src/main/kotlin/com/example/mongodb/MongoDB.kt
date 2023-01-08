@@ -75,7 +75,7 @@ class MongoDB {
     fun getAllReportForUsername(username: String) =
         createListOfClientReport(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
             .getCollection(userReportDocument).find().filter {
-                document -> document["interestedUser"] == username
+                document -> document["interestedUsername"] == username
             })
 
     fun insertClientReport(report: ClientReportDB) =
