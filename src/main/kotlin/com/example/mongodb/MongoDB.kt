@@ -22,9 +22,13 @@ class MongoDB {
     private val clientReportCollection = "clientReport"
     private val locationCollection = "location"
 
-    fun readAllUsers(): List<Document> {
-        return MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).find().toList()
+    fun readAllUsers(): MutableList<UserDB> {
+        val userList = emptyList<UserDB>().toMutableList()
+        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+            .getCollection(userCollection).find().forEach {
+                document -> userList.add(composeUser(document))
+            }
+        return userList
     }
 
     fun readUserFromUsername(username: String): UserDB {
