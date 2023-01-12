@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.models.AccessInformation
 import com.example.models.ClientReportDB
 import com.example.models.UserDB
 import com.example.mongodb.MongoDB
@@ -32,11 +33,14 @@ fun Application.configureRouting() {
             }
         }
         get("/users/signInUser/{email?}/{password?}") {
-            val email = call.parameters["email"]!!
-            val password = call.parameters["password"]!!
+            //val email = call.parameters["email"]!!
+            //val password = call.parameters["password"]!!
 
-            if (MongoDB().checkEmailExistsWithPasswordInCollection("users", email, password) == 1) {
-                val user = MongoDB().readUserFromEmail(call.parameters["email"]!!)
+            val accessInformation = call.receive<AccessInformation>()
+
+            if (MongoDB().checkEmailExistsWithPasswordInCollection("users",
+                    accessInformation.userEmail, accessInformation.userPassword) == 1) {
+                val user = MongoDB().readUserFromEmail(accessInformation.userEmail)
                 call.respond(user)
             } else {
                 call.respond(UserDB("", "", "", "", "", "", "",""))
