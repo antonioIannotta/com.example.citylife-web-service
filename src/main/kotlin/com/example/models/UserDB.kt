@@ -2,6 +2,10 @@ package com.example.models
 
 import kotlinx.serialization.Serializable
 
+
+/**
+ * Classe che modella un Utente
+ */
 @Serializable
 data class UserDB(
     var name: String,
