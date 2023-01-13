@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.models.AccessInformation
 import com.example.models.ClientReportDB
+import com.example.models.LocationDB
 import com.example.models.UserDB
 import com.example.mongodb.MongoDB
 import io.ktor.server.routing.*
@@ -56,14 +57,21 @@ fun Application.configureRouting() {
             }
         }
 
-        get("/users/updateLocation/{username?}/{location?}") {
+        /*get("/users/updateLocation/{username?}/{location?}") {
             MongoDB().updateLocationInUserCollection(call.parameters["username"]!!, call.parameters["location"]!!)
+            call.respondText("Location updated correctly!")
+        }*/
+
+        put("/users/updateLocation") {
+            val location = call.receive<LocationDB>()
+            MongoDB().updateLocationInUserCollection(location.username, location.location)
             call.respondText("Location updated correctly!")
         }
 
-        get("/users/updateDistance/{username?}/{distance?}") {
-            MongoDB().updateDistanceInUserCollection(call.parameters["username"]!!, call.parameters["distance"]!!)
-            call.respondText("Distance updated correctly!")
+        put("/users/updateDistance") {
+            val location = call.receive<LocationDB>()
+            MongoDB().updateLocationInUserCollection(location.username, location.distance)
+            call.respondText("Location updated correctly!")
         }
 
         get("/users/updateReportPreference/{username?}/{reportPreference?}") {
@@ -90,21 +98,24 @@ fun Application.configureRouting() {
             call.respondText("Client report correctly inserted!")
         }
 
-        get("/location/insertLocationAndDistance/{username?}/{location?}/{distance?}") {
+        post("/location/insertLocationAndDistance/") {
+            val location = call.receive<LocationDB>()
             MongoDB().insertLocationAndDistanceInLocationCollection(
-                call.parameters["username"]!!,
-                call.parameters["location"]!!,
-                call.parameters["distance"]!!
+                location.username,
+                location.location,
+                location.distance
             )
 
             call.respondText("Username, location and distance correctly inserted!")
         }
 
         get("/location/updateLocationAndDistance/{username?}/{location?}/{distance?}") {
+            val location = call.receive<LocationDB>()
+
             MongoDB().updateLocationAndDistanceInLocationCollection(
-                call.parameters["username"]!!,
-                call.parameters["location"]!!,
-                call.parameters["distance"]!!
+                location.username,
+                location.location,
+                location.distance
             )
             call.respondText("Username, location and distance correctly updated!")
         }
