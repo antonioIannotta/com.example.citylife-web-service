@@ -70,8 +70,8 @@ fun Application.configureRouting() {
 
         put("/users/updateDistance") {
             val location = call.receive<LocationDB>()
-            MongoDB().updateLocationInUserCollection(location.username, location.distance)
-            call.respondText("Location updated correctly!")
+            MongoDB().updateDistanceInUserCollection(location.username, location.distance)
+            call.respondText("Distance updated correctly!")
         }
 
         get("/users/updateReportPreference/{username?}/{reportPreference?}") {
