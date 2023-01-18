@@ -127,7 +127,7 @@ class MongoDB {
      * 'location', avente come username quello passato come argomento
      */
     fun updateLocationAndDistanceInLocationCollection(username: String, location: String, distance: String) {
-        val filter = Filters.eq("Username", username)
+        val filter = Filters.eq("username", username)
         val updates = emptyList<Bson>().toMutableList()
         updates.add(Updates.set("username", username))
         updates.add(Updates.set("location", location))
