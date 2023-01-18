@@ -98,7 +98,7 @@ fun Application.configureRouting() {
             call.respondText("Client report correctly inserted!")
         }
 
-        post("/location/insertLocationAndDistance/") {
+        post("/location/insertLocationAndDistance") {
             val location = call.receive<LocationDB>()
             MongoDB().insertLocationAndDistanceInLocationCollection(
                 location.username,

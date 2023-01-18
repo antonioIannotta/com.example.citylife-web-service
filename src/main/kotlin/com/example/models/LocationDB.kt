@@ -8,6 +8,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LocationDB(
     var username: String,
-    var distance: String,
-    var location: String
+    var location: String,
+    var distance: String
 )
