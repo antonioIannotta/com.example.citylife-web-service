@@ -2,6 +2,7 @@ package com.example.mongodb
 
 import com.example.models.ClientReportDB
 import com.example.models.UserDB
+import com.mongodb.Mongo
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.model.Filters
@@ -25,10 +26,12 @@ class MongoDB {
      */
     fun readAllUsers(): MutableList<UserDB> {
         val userList = emptyList<UserDB>().toMutableList()
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(userCollection).find().forEach {
-                document -> userList.add(composeUser(document))
+                    document -> userList.add(composeUser(document))
             }
+        mongoClient.close()
         return userList
     }
 
@@ -36,38 +39,47 @@ class MongoDB {
      * Metodo che ritorna l'utente avente come username quello passato come argomento
      */
     fun readUserFromUsername(username: String): UserDB {
-        return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).find().first {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        val user = composeUser(mongoClient.getDatabase(databaseName).getCollection(userCollection).find().first {
                 document -> document["username"].toString() == username
-            }!!)
+        }!!)
+        mongoClient.close()
+        return user
     }
 
     /**
      * Metodo che ritorna l'utente avente come email quella passata come argomento.
      */
     fun readUserFromEmail(email: String): UserDB {
-        return composeUser(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).find().first {
-                    document -> document["email"].toString() == email
-            }!!)
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        val user = composeUser(mongoClient.getDatabase(databaseName).getCollection(userCollection).find().first {
+                document -> document["email"].toString() == email
+        }!!)
+        mongoClient.close()
+        return user
     }
 
     /**
      * Metodo per l'inserimento di un utente all'interno della collezione 'users' sul Database
      */
-    fun insertUser(userDB: UserDB) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun insertUser(userDB: UserDB) {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(userCollection).insertOne(createUserDocument(userDB))
+        mongoClient.close()
+    }
 
     /**
      * Metodo per aggiornare la posizione dell'utente, nella collezione 'users', avente come username quello
      * passato come argomento
      */
     fun updateLocationInUserCollection(username: String, location: String) {
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(userCollection).updateOne(
                 Filters.eq("username", username), Updates.set("location", location)
             )
+        mongoClient.close()
     }
 
     /**
@@ -75,10 +87,12 @@ class MongoDB {
      * passato come argomento
      */
     fun updateDistanceInUserCollection(username: String, distance: String) {
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(userCollection).updateOne(
                 Filters.eq("username", username), Updates.set("distance", distance)
             )
+        mongoClient.close()
     }
 
     /**
@@ -86,40 +100,52 @@ class MongoDB {
      * avente come username quello passato come argomento, è interessato
      */
     fun updateReportPreferenceInUserCollection(username: String, reportPreference: String) {
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
-            .getCollection(userCollection).findOneAndUpdate(
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
+            .getCollection(userCollection).updateOne(
                 Filters.eq("username", username), Updates.set("reportPreference", reportPreference)
             )
+        mongoClient.close()
     }
 
     /**
      * Metodo che ritorna tutti di documenti, all'interno della collezione 'userReportDocument', relativi all'utente
      * avente come username quello passato come argomento
      */
-    fun getAllReportForUsername(username: String) =
-        createListOfClientReport(MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun getAllReportForUsername(username: String): MutableList<ClientReportDB> {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        val reportForUsername = createListOfClientReport(mongoClient.getDatabase(databaseName)
             .getCollection(userReportDocument).find().filter {
-                document -> document["interestedUsername"] == username
+                    document -> document["interestedUsername"] == username
             })
+        mongoClient.close()
+        return reportForUsername
+    }
 
     /**
      * Metodo che consente all'utente di inserire un Report all'interno della collezione 'clientReportCollection'
      */
-    fun insertClientReport(report: ClientReportDB) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun insertClientReport(report: ClientReportDB) {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(clientReportCollection).insertOne(createClientReportDocument(report))
+        mongoClient.close()
+    }
 
     /**
      * Metodo che si occupa di inserire username, location e distance di un utento al momento dell'iscrizione
      */
-    fun insertLocationAndDistanceInLocationCollection(username: String, location: String, distance: String) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun insertLocationAndDistanceInLocationCollection(username: String, location: String, distance: String) {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        mongoClient.getDatabase(databaseName)
             .getCollection(locationCollection).insertOne(
                 Document()
                     .append("username", username)
                     .append("location", location)
                     .append("distance", distance)
             )
+        mongoClient.close()
+    }
 
 
     /**
@@ -127,6 +153,8 @@ class MongoDB {
      * 'location', avente come username quello passato come argomento
      */
     fun updateLocationAndDistanceInLocationCollection(username: String, location: String, distance: String) {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+
         val filter = Filters.eq("username", username)
         val updates = emptyList<Bson>().toMutableList()
         updates.add(Updates.set("username", username))
@@ -135,8 +163,10 @@ class MongoDB {
 
         val options = UpdateOptions().upsert(true)
 
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+        mongoClient.getDatabase(databaseName)
             .getCollection(locationCollection).updateOne(filter, updates, options)
+
+        mongoClient.close()
     }
 
     /**
@@ -209,19 +239,27 @@ class MongoDB {
      * Metodo che si occupa di controllare il numero di documenti, presenti all'interno della collezione specificata,
      * che hanno un campo email uguale alla mail passata come argomento
      */
-    fun checkEmailExistsInCollection(collectionName: String, email: String) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun checkEmailExistsInCollection(collectionName: String, email: String): Int {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        val count = mongoClient.getDatabase(databaseName)
             .getCollection(collectionName).find().count {
-                document -> document["email"] == email
+                    document -> document["email"] == email
             }
+        mongoClient.close()
+        return count
+    }
 
     /**
      * Metodo che si occupa di controllare il numero di documenti, presenti all'interno della collezione specificata,
      * che hanno un campo email e password uguali a quelli passati come argomento
      */
-    fun checkEmailExistsWithPasswordInCollection(collectionName: String, email: String, password: String) =
-        MongoClient(MongoClientURI(mongoAddress)).getDatabase(databaseName)
+    fun checkEmailExistsWithPasswordInCollection(collectionName: String, email: String, password: String): Int {
+        val mongoClient = MongoClient(MongoClientURI(mongoAddress))
+        val count = mongoClient.getDatabase(databaseName)
             .getCollection(collectionName).find().count {
                     document -> document["email"] == email && document["password"] == password
             }
+        mongoClient.close()
+        return count
+    }
 }
