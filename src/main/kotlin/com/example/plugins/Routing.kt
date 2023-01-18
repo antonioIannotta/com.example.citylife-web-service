@@ -110,12 +110,11 @@ fun Application.configureRouting() {
         }
 
         get("/location/updateLocationAndDistance/{username?}/{location?}/{distance?}") {
-            val location = call.receive<LocationDB>()
 
             MongoDB().updateLocationAndDistanceInLocationCollection(
-                location.username,
-                location.location,
-                location.distance
+                call.parameters["username"]!!,
+                call.parameters["location"]!!,
+                call.parameters["distance"]!!
             )
             call.respondText("Username, location and distance correctly updated!")
         }
