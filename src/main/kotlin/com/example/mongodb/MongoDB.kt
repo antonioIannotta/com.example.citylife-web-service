@@ -2,7 +2,6 @@ package com.example.mongodb
 
 import com.example.models.ClientReportDB
 import com.example.models.UserDB
-import com.mongodb.Mongo
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.model.Filters
