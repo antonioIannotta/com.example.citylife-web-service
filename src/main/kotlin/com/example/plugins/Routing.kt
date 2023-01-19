@@ -49,6 +49,7 @@ fun Application.configureRouting() {
                 val user = MongoDB().readUserFromEmail(accessInformation.userEmail)
                 call.respond(user)
             } else {
+                call.respond(UserDB("", "", "", "", "", "", "",""))
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
