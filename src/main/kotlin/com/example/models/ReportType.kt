@@ -1,5 +1,3 @@
-package com.example.citylife.model.report
-
 /**
  * Rappresenta le varie tipologie di segnalazioni possibili
  */

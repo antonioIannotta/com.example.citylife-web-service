@@ -1,6 +1,6 @@
 package com.example.plugins
 
-import com.example.citylife.model.report.ReportType
+import ReportType
 import com.example.models.AccessInformation
 import com.example.models.ClientReportDB
 import com.example.models.LocationDB
