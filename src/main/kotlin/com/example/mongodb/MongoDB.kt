@@ -52,9 +52,14 @@ class MongoDB {
      */
     fun readUserFromEmail(email: String): UserDB {
         val mongoClient = MongoClient(MongoClientURI(mongoAddress))
-        val user = composeUser(mongoClient.getDatabase(databaseName).getCollection(userCollection).find().first {
-                document -> document["email"].toString() == email
-        }!!)
+        var user: UserDB
+        if (email.isBlank()) {
+            user = UserDB("", "", "", "", "", "", "", "")
+        } else {
+            user = composeUser(mongoClient.getDatabase(databaseName).getCollection(userCollection).find().first {
+                    document -> document["email"].toString() == email
+            }!!)
+        }
         mongoClient.close()
         return user
     }

@@ -37,15 +37,18 @@ fun Application.configureRouting() {
             }
         }
 
-        get("/users/signInUser/{email?}/{password?}") {
+        get("/users/signInUser") {
             val accessInformation = call.receive<AccessInformation>()
+
+            if(accessInformation.userEmail.isBlank()) {
+                call.respond(UserDB("", "", "", "", "", "", "",""))
+            }
 
             if (MongoDB().checkEmailExistsWithPasswordInCollection("users",
                     accessInformation.userEmail, accessInformation.userPassword) == 1) {
                 val user = MongoDB().readUserFromEmail(accessInformation.userEmail)
                 call.respond(user)
             } else {
-                call.respond(UserDB("", "", "", "", "", "", "",""))
                 call.respondText("User not found!", status = HttpStatusCode.OK)
             }
         }
